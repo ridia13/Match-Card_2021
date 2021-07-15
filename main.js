@@ -12,30 +12,46 @@ function shuffle() { //피셔-예이츠 셔플
 
 }
 
-function createCard() {
+function createCard(i) { //.card > .card-inner> (.card-front + .card-back)
+  // for (let i = 0; i < total; i++) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const cardInner = document.createElement('div');
+  cardInner.className = 'card-inner';
+  const cardFront = document.createElement('div');
+  cardFront.className = 'card-front';
+  const cardBack = document.createElement('div');
+  cardBack.className = 'card-back';
+  cardBack.style.backgroundColor = shuffled[i];
+  cardInner.appendChild(cardFront);
+  cardInner.appendChild(cardBack);
+  card.appendChild(cardInner);
+  return card;
+  // }
+}
+
+function startGame() {
+  shuffle();
   for (let i = 0; i < total; i++) {
     const $wrapper = document.querySelector('#wrapper');
-    const card = document.createElement('div');
-    card.classList.add('card');
-    const cardInner = document.createElement('div');
-    cardInner.classList.add('card-inner');
-    const cardFront = document.createElement('div');
-    cardFront.classList.add('card-front');
-    const cardBack = document.createElement('div');
-    cardBack.classList.add('card-back');
-    cardInner.appendChild(cardFront);
-    cardInner.appendChild(cardBack);
-    card.appendChild(cardInner);
+    const card = createCard(i);
     $wrapper.appendChild(card);
   }
+
+  const $cards = document.querySelectorAll('.card');
+  $cards.forEach((card, index, parent) => {
+    setTimeout(() => {
+      card.classList.add('flipped');
+    }, 1000 + 50 * index);
+
+    setTimeout(() => {
+      card.classList.remove('flipped');
+    }, 4000);
+  })
 }
 
-function gameStart(){
-  createCard();
-}
+startGame();
 
-function init(){
-  gameStart();
-}
+function init() {}
 
 init();
