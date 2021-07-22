@@ -1,12 +1,14 @@
 "use strict";
 
-const total = 12;
-const colors = ['red', 'orange', 'yellow', 'green', 'white', 'pink'];
-const colorCopy = colors.concat(colors);
+const TOTAL = 12;
+const $wrapper = document.querySelector('#wrapper');
 const $msg = document.querySelector('#js-msg');
+const colors = ['red', 'orange', 'yellow', 'green', 'white', 'pink'];
+let colorCopy = colors.concat(colors);
 let shuffled = [];
 let clicked = [];
 let completed = [];
+let clickable = false;
 
 function shuffle() { //피셔-예이츠 셔플
   for (let i = 0; colorCopy.length > 0; i++) {
@@ -31,9 +33,19 @@ function createCard(i) { //.card > .card-inner> (.card-front + .card-back)
   return card;
 }
 
+function resetGame() {
+  $wrapper.innerHTML = '';
+  colorCopy = colors.concat(colors);
+  shuffled = [];
+  completed = [];
+  clickable = false;
+  startGame();
+  $msg.textContent = '';
+}
+
 function startGame() {
   shuffle();
-  for (let i = 0; i < total; i++) {
+  for (let i = 0; i < TOTAL; i++) {
     const $wrapper = document.querySelector('#wrapper');
     const card = createCard(i);
     card.addEventListener('click', onClickCard);
@@ -48,20 +60,24 @@ function startGame() {
 
     setTimeout(() => {
       card.classList.remove('flipped');
+      clickable = true;
     }, 4000);
   })
 }
 
 function onClickCard() {
+  if (!clickable || completed.includes(this) || clicked.length >= 2 || clicked[0] === this) { //짝 맞춘 카드
+    return;
+  }
   this.classList.toggle('flipped');
   clicked.push(this);
 
   if (clicked.length != 2) {
     return;
   }
+
   const firstBackColor = clicked[0].querySelector('.card-back').style.backgroundColor;
   const secondBackColor = clicked[1].querySelector('.card-back').style.backgroundColor;
-
   if (firstBackColor !== secondBackColor) {
     setTimeout(() => {
       clicked[0].classList.remove('flipped');
@@ -73,10 +89,13 @@ function onClickCard() {
   completed = completed.concat(clicked);
   clicked = [];
 
-  if (completed.length !== total) {
+  if (completed.length !== TOTAL) {
     return;
   }
   $msg.textContent = "Congratulations!!";
+  setTimeout(() => {
+    resetGame();
+  }, 1500);
 }
 
 function init() {
