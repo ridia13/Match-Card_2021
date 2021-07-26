@@ -66,7 +66,7 @@ function startGame() {
 }
 
 function onClickCard() {
-  if (!clickable || completed.includes(this) || clicked.length >= 2 || clicked[0] === this) { //짝 맞춘 카드
+  if (!clickable || completed.includes(this) || clicked[0] === this) { //짝 맞춘 카드
     return;
   }
   this.classList.toggle('flipped');
@@ -79,10 +79,12 @@ function onClickCard() {
   const firstBackColor = clicked[0].querySelector('.card-back').style.backgroundColor;
   const secondBackColor = clicked[1].querySelector('.card-back').style.backgroundColor;
   if (firstBackColor !== secondBackColor) {
+    clickable = false;
     setTimeout(() => {
       clicked[0].classList.remove('flipped');
       clicked[1].classList.remove('flipped');
       clicked = [];
+      clickable = true;
     }, 500);
     return;
   }
