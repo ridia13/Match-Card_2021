@@ -1,10 +1,15 @@
 "use strict";
 
-const TOTAL = 12;
+let TOTAL = 0;
 const $wrapper = document.querySelector('#wrapper');
 const $msg = document.querySelector('#js-msg');
-const colors = ['red', 'orange', 'yellow', 'green', 'white', 'pink'];
-let colorCopy = colors.concat(colors);
+const $form = document.querySelector('form'),
+  $input = $form.querySelector('#js-input');
+const colors = [
+  'red', 'orange', 'yellow', 'green', 'powderblue', 'greenyellow', 'purple', 'white', 'pink', 'plum'
+];
+let colorSlice = [];
+let colorCopy = [];
 let shuffled = [];
 let clicked = [];
 let completed = [];
@@ -35,13 +40,15 @@ function createCard(i) { //.card > .card-inner> (.card-front + .card-back)
 
 function resetGame() {
   $wrapper.innerHTML = '';
-  colorCopy = colors.concat(colors);
+  colorCopy = colorSlice.concat(colorSlice);
   shuffled = [];
   completed = [];
   clickable = false;
   startGame();
   $msg.textContent = '';
 }
+let startTime = {};
+let endTime = {};
 
 function startGame() {
   shuffle();
@@ -61,6 +68,7 @@ function startGame() {
     setTimeout(() => {
       card.classList.remove('flipped');
       clickable = true;
+      startTime = new Date().getTime();
     }, 4000);
   })
 }
@@ -90,17 +98,31 @@ function onClickCard() {
   }
   completed = completed.concat(clicked);
   clicked = [];
-
-  if (completed.length !== TOTAL) {
+  if (completed.length !== parseInt(TOTAL)) {
     return;
   }
-  $msg.textContent = "Congratulations!!";
+  endTime = new Date().getTime();
+  let time = Math.floor((endTime - startTime) / 1000);
+  $msg.textContent = `Congratulations!! It took ${time}s.`;
   setTimeout(() => {
     resetGame();
-  }, 1500);
+  }, 2000);
+}
+
+function getTotal(e) {
+  e.preventDefault();
+  if($input.value % 2 !== 0 || $input.value > 20){
+    $input.value = '';
+    return;
+  }
+  TOTAL = $input.value;
+  colorSlice = colors.slice(0, TOTAL / 2);
+  colorCopy = colorSlice.concat(colorSlice);
+  $form.style.display = 'none';
+  startGame();
 }
 
 function init() {
-  startGame();
+  $form.addEventListener('submit', getTotal);
 }
 init();

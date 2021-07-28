@@ -30,6 +30,7 @@
   height: 100%;
   border: 1px solid #000;
   backface-visibility: hidden;
+  color:powderblue
 }
 
 .card-back{
